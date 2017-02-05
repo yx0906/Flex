@@ -14,8 +14,9 @@
   <header>
     <h1 id="{{ article.slug }}">{{ article.title }}</h1>
     <p>
-      {{ _('Posted on %(when)s in %(category)s',
+      {{ _('Posted on %(when)s, last modified on %(when_modify)s in %(category)s',
            when=article.locale_date,
+           when_modify=article.locale_modified,
            category='<a href="%s/%s">%s</a>'|format(SITEURL, article.category.url, article.category)|safe) }}
 
       {% if 'post_stats' in PLUGINS %}
@@ -23,7 +24,11 @@
       {% endif %}
     </p>
   </header>
-
+  {% if article.toc %}
+    <div class="toc">
+    {{ article.toc }}
+    </div>
+  {% endif %}
   {% if GOOGLE_ADSENSE and GOOGLE_ADSENSE.ads.article_top %}
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <ins class="adsbygoogle ads-responsive"
@@ -46,12 +51,24 @@
       {% endif %}
     </p>
   </div>
-
+  <div class="prev_next">
+        {% if article.prev_article_in_category %}
+                <a href="{{ SITEURL }}/{{ article.prev_article_in_category.url}}">
+                    Previous Post: {{ article.prev_article_in_category.title }}
+                </a>
+        {% endif %}
+        {% if article.next_article_in_category %}
+                <a href="{{ SITEURL }}/{{ article.next_article_in_category.url}}">
+                    Next Post: {{ article.next_article_in_category.title }}
+                </a>
+        {% endif %}
+  </div>
   {% if ADD_THIS_ID %}
   <div class="center social-share">
     <p>{{ _('Like this article? Share it with your friends!') }}</p>
     <div class="addthis_native_toolbox"></div>
     <div class="addthis_sharing_toolbox"></div>
+    <div class="addthis_inline_share_toolbox"></div>
   </div>
   {% endif %}
 
@@ -77,6 +94,5 @@
   {% endif %}
 
   {% include "partial/disqus.html" %}
-  {% include "partial/duoshuo.html" %}
 </article>
 {% endblock %}
